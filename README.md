@@ -1,4 +1,7 @@
 presentations
 =============
 
-Contains my presentations: scripts, slides, code.
+Contains my presentations: 
+- scripts
+- slides
+- code
