@@ -54,18 +54,20 @@
  1. Запустим простую консольку, которая будет у нас эмулировать приложение, работающее с базами данных. Она не даёт никакой значимой нагрузки, просто запрашивает количество изделий в обеих базах и умеет переходить вслед за переключением мирроринга. 
  2. Поставим на все сервера Failover Clustering фичу:
 
-    Install-WindowsFeature -Name Failover-Clustering –IncludeManagementTools
+    `Install-WindowsFeature -Name Failover-Clustering –IncludeManagementTools`
 
  3. Добавим все сервера в домен и поправим всем Firewall
 
-    Add-Computer sql.dm.ag.domain -Credential Administrator@sql.dm.ag.domain
-    netsh advfirewall set allprofiles state off
+    `Add-Computer sql.dm.ag.domain -Credential Administrator@sql.dm.ag.domain`
+
+    `netsh advfirewall set allprofiles state off`
 
  4. Перезагрузим sql-dm-ag3
  5. Перезагрузим sql-dm-ag2
  6. Сделаем Failover на все базы:
 
     `alter database AdventureWorks2014 set partner failover`
+
     `alter database SecondaryAdventureWorks2014 set partner failover`
     
     Мы видим, что консолька переключилась на новый сервер.
@@ -74,19 +76,23 @@
  8. Для настройки кластера необходимо быть залогиненым под доменным юзером. Создадим кластер с настройками по умолчанию:
 
     `Import-Module FailoverClusters`
+
     `New-Cluster -Name sql-dm-ag-cluster -Node sql-dm-ag1, sql-dm-ag2, sql-dm-ag3`
 
  9. Включим AlwaysOn, используя Sql Server Configuration Manager -> Properties -> AlwaysOn tab. Так как это требует перезагрузки сервера, перезапустим сервисы на sql-dm-ag1 и sql-dm-ag3.
  10. Сделаем Failover на все базы:
 
     `alter database AdventureWorks2014 set partner failover`
+    
     `alter database SecondaryAdventureWorks2014 set partner failover`
+    
     Опять же, правильно сконфигурированные приложения переключились
 
  11. Перезагрузим сервис сиквела на sql-dm-ag2.
  12. К сожалению, база данных не может одновременно быть частью DM и AlwaysOn, поэтому отключим мирроринг:
 
     `alter database AdventureWorks2014 set partner off`
+    
     `alter database SecondaryAdventureWorks2014 set partner off`
 
  13. Создадим новую группу с помощью визарда, потому что это более иллюстративно. Назовём её sql-dm-ag-group, в качестве дополнительных реплик укажем наши два другие сервера. 
