@@ -65,28 +65,29 @@
  5. Перезагрузим sql-dm-ag2
  6. Сделаем Failover на все базы:
 
-    alter database AdventureWorks2014 set partner failover
-    alter database SecondaryAdventureWorks2014 set partner failover
+    `alter database AdventureWorks2014 set partner failover`
+    `alter database SecondaryAdventureWorks2014 set partner failover`
+    
     Мы видим, что консолька переключилась на новый сервер.
 
  7. Перезагрузим sql-dm-ag1
  8. Для настройки кластера необходимо быть залогиненым под доменным юзером. Создадим кластер с настройками по умолчанию:
 
-    Import-Module FailoverClusters
-    New-Cluster -Name sql-dm-ag-cluster -Node sql-dm-ag1, sql-dm-ag2, sql-dm-ag3
+    `Import-Module FailoverClusters`
+    `New-Cluster -Name sql-dm-ag-cluster -Node sql-dm-ag1, sql-dm-ag2, sql-dm-ag3`
 
  9. Включим AlwaysOn, используя Sql Server Configuration Manager -> Properties -> AlwaysOn tab. Так как это требует перезагрузки сервера, перезапустим сервисы на sql-dm-ag1 и sql-dm-ag3.
  10. Сделаем Failover на все базы:
 
-    alter database AdventureWorks2014 set partner failover
-    alter database SecondaryAdventureWorks2014 set partner failover
+    `alter database AdventureWorks2014 set partner failover`
+    `alter database SecondaryAdventureWorks2014 set partner failover`
     Опять же, правильно сконфигурированные приложения переключились
 
  11. Перезагрузим сервис сиквела на sql-dm-ag2.
  12. К сожалению, база данных не может одновременно быть частью DM и AlwaysOn, поэтому отключим мирроринг:
 
-    alter database AdventureWorks2014 set partner off
-    alter database SecondaryAdventureWorks2014 set partner off
+    `alter database AdventureWorks2014 set partner off`
+    `alter database SecondaryAdventureWorks2014 set partner off`
 
  13. Создадим новую группу с помощью визарда, потому что это более иллюстративно. Назовём её sql-dm-ag-group, в качестве дополнительных реплик укажем наши два другие сервера. 
  14. Поставим, что основная реплика и запасная на sql-dm-ag2 будут синхронными и на них будет работать auto failover.
